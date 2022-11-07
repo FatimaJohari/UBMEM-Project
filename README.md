@@ -34,11 +34,11 @@ After the installation is completed, open the "UBEM.py" file and run the codes.
 
 If the model starts running, you should be able to see this on the consol:
 
-* Simulation is running 
+SIMULATION IS RUNNING ... 
 
-Building Number__ 0 __
+Building 0 / 82
 
-C:\EnergyPlusV9-1-0\energyplus.exe 
+C:\EnergyPlusV9-2-0\energyplus.exe 
 --weather X:\UBEM\input_data\SWE_Stockholm.Arlanda.024600_IWEC.epw
 --output-directory X:\UBEM 
 --idd C:/EnergyPlusV9-2-0/Energy+.idd X:\UBEM\in.idf *
