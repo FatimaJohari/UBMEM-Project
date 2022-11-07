@@ -75,7 +75,7 @@ firstDayOfYear = pd.read_csv(epw, sep=',',skiprows = 7,
 year = int(pd.read_csv(epw, sep=',',skiprows = 8, low_memory=False).columns[0])
 leapYear = leap_year(year)
 
-occupancyInputs = pd.read_csv('occupancyInputs.csv', sep=';',low_memory=False)
+occupancyInputs = pd.read_csv('inputs/occupancyInputs.csv', sep=';',low_memory=False)
 
 occupancy = occupancyInputs['Occupancy from mobility data']
 personHeat = occupancyInputs['Person heat renormalized to mobility data (W)']
