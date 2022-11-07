@@ -11,7 +11,7 @@ class Archetype():
         self.buildingType = buildingType
         self.buildingYear = buildingYear
         
-    def archetype(buildingType, buildingYear):
+    def archetype(buildingType,buildingYear):
         """
         Reads information of pre-defined building archetypes and labels the buildings accordingly.
             
@@ -20,7 +20,7 @@ class Archetype():
         buildingType: str
             Type of building given in the GIS file.
         
-        buildingYear: int
+        buildingYear:int
             Construction year of the building
                 
         output
@@ -29,16 +29,16 @@ class Archetype():
             Given category of the building based on its archetype. 
         """ 
         
-        # Read  the list of predefined archetypes. 
-        listOfArchetypes = pd.read_csv('archetypes.txt',sep = ",", 
+        # Read the list of predefined archetypes. 
+        listOfArchetypes = pd.read_csv('archetypes/archetypeClasses.txt',sep = ",", 
                                        encoding = 'ANSI', header='infer')
         
-        # Filter  the list of archetypes based on type and construction year of the building.
+        # Filter the list of archetypes based on type and construction year of the building.
         archetype = listOfArchetypes[(listOfArchetypes['buildingType'] == buildingType) &
                                      (listOfArchetypes['buildingYearFrom']< buildingYear) &
                                       (buildingYear <= listOfArchetypes['buildingYearTo'])]
         
-        # Get  the category of the building based on the filtered list 
+        # Get the category of the building based on the filtered list 
         arch = archetype['archetype'].values[0]
        
         return arch
@@ -58,11 +58,8 @@ class Archetype():
             Given type of buildings: 'Apartment', 'House'
         """         
             
-        #if buildingType == 'Residential;MultifamilyBuilding':
-        if buildingType == 'Bostad; Flerfamiljshus':   
+        if buildingType == 'multiFamilyBuilding':   
             return 'Apartment'
         else:
             return 'House'
-            
-            
-            
+           
