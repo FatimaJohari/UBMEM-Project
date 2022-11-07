@@ -10,3 +10,42 @@ The model is going to be published in:
 [1] F. Johari, F. Shadram, J. Widén, Urban building energy modeling from available national databases, 2022.
 
 Any academic or educational use of the model should cite [1], for corporate use, contact Fatemeh Johari at fatemeh.johari@angstrom.uu.se
+
+Requirements
+____________________________________________
+To run the model, make sure that the required tools and packages are already installed on your computer.
+
+1.EnergyPlus:
+https://github.com/NREL/EnergyPlus/releases/tag/v9.2.0
+
+2. Python (you can use Anaconda and Spyder to run the model):
+https://www.anaconda.com/products/distribution
+
+3.EPPY:
+https://pypi.org/project/eppy/
+
+4.geopandas:
+https://geopandas.org/en/stable/getting_started.html
+
+5.shapely:
+https://pypi.org/project/shapley/
+
+After the installation is completed, open the "UBEM.py" file and run the codes.
+
+If the model starts running, you should be able to see this on the consol:
+
+* Simulation is running 
+
+Building Number__ 0 __
+
+C:\EnergyPlusV9-1-0\energyplus.exe 
+--weather X:\UBEM\input_data\SWE_Stockholm.Arlanda.024600_IWEC.epw
+--output-directory X:\UBEM 
+--idd C:/EnergyPlusV9-2-0/Energy+.idd X:\UBEM\in.idf *
+
+It is going to take about a few seconds to run the simulation for each building. 
+In the given example file, there are 82 buildings.
+
+After the simulation is completed, an excel file with all the results can be found in the results folder.
+
+
