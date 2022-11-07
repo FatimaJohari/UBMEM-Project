@@ -10,7 +10,7 @@ import pandas as pd
 
 class Initials:
     def __init__(self, idf, area, height, firstDayOfYear, leapYear, occupancy,
-                 personHeat, appliances, hotWater, lighting, building):
+                 personHeat, appliances, hotWater):
         self.idf = idf
         self.area = area
         self.height = height
@@ -21,7 +21,6 @@ class Initials:
         self.appliances = appliances
         self.hotWater = hotWater 
         self.lighting = lighting
-        self.building  = building
         
     def occupants(area, height):
         """
@@ -87,7 +86,7 @@ class Initials:
 
       
     def profile_generator (occupancy, personHeat, appliances,hotWater, 
-                           lighting, firstDayOfYear, leapYear, building):
+                           firstDayOfYear, leapYear):
         """
         Generates hourly user profile for occupancy, metabolic heat, 
         domestic hot water, use of electrical appliances and lighting. 
@@ -103,22 +102,17 @@ class Initials:
             Annual average daily electricity use for electrical appliances.
         hotWater: dataframe
             Annual average daily domestic hot water use.
-        lighting: dataframe
-            Monthly average daily electricity use for lighting.
         firstDayOfYear: str
             First day of the calendar year, i.e., Monday, Tuesday, or etc.
         leapYear: int
             1 if calendar year is a leap year, 0 if it is not.
-        building: str
-            Main type of buildings, i.e., Apartment or House.
-            
+
         output
         ------
         occupancyProfile***.txt
         personHeatProfile***.txt
         appliancesProfile***.txt
         hotWaterProfile***.txt
-        lightingProfile***.txt:
         
             Stand-alone text files including hourly user profiles for both apartments and houses.
         """
@@ -139,47 +133,34 @@ class Initials:
         personHeatProfile = []
         appliancesProfile = []
         hotWaterProfile = []
-        lightingProfile = []
-        d, m = 0, 0
+
         for day in daysOfYear:
-            d += 1
             # For profiles with no seasonal dependencies.
-            occupancyProfile.append(occupancy.iloc[:,1].values if day == 'Saturday' or day == 'Sunday' else occupancy.iloc[:,0].values)
-            personHeatProfile.append(personHeat.iloc[:,1].values if day == 'Saturday' or day == 'Sunday' else personHeat.iloc[:,0].values)
-            appliancesProfile.append(appliances.iloc[:,1].values if day == 'Saturday' or day == 'Sunday' else appliances.iloc[:,0].values)            
-            hotWaterProfile.append(hotWater.iloc[:,1].values if day == 'Saturday' or day == 'Sunday' else hotWater.iloc[:,0].values)
+            occupancyProfile.append(occupancy.values if day == 'Saturday' or day == 'Sunday' else occupancy.values)
+            personHeatProfile.append(personHeat.values if day == 'Saturday' or day == 'Sunday' else personHeat.values)
+            appliancesProfile.append(appliances.values if day == 'Saturday' or day == 'Sunday' else appliances.values)            
+            hotWaterProfile.append(hotWater.values if day == 'Saturday' or day == 'Sunday' else hotWater.values)
             
-            # For lighting profile with seasonal dependency.
-            if d < months[m]:
-                lightingProfile.append(lighting.iloc[:,m+12].values if day == 'Saturday' or day == 'Sunday' else lighting.iloc[:,m].values)
-            else:  
-                m +=1
-                lightingProfile.append(lighting.iloc[:,m+12].values if day == 'Saturday' or day == 'Sunday' else lighting.iloc[:,m].values)                
-                continue
             
         # Convert lists to numy arrays and reshape them. 
         occupancyProfile = np.array(occupancyProfile).flatten()
         personHeatProfile = np.array(personHeatProfile).flatten() # Watts/person
         appliancesProfile = np.array(appliancesProfile).flatten() # Watts/person
         hotWaterProfile = np.array(hotWaterProfile).flatten()/3600000 #liter/h.person to m3/s.person
-        # 25% reduction in lighting power from 2009 to 2016. 
-        lightingProfile = np.array(lightingProfile).flatten()* 0.75 # Watts/person
 
         # Get hot water peak flow rate from the profile.
         maxFlowHotWater =  np.max(hotWaterProfile)
         
             
-        return (pd.DataFrame(occupancyProfile).to_csv('occupancyProfile%s.txt'%building,
+        return (pd.DataFrame(occupancyProfile).to_csv('occupancyProfiles.txt',
                                                       index=False, header=False),
-                pd.DataFrame(personHeatProfile).to_csv('personHeatProfile%s.txt'%building, 
+                pd.DataFrame(personHeatProfile).to_csv('personHeatProfiles.txt',
                                                        index=False, header=False), 
-                pd.DataFrame(appliancesProfile).to_csv('appliancesProfile%s.txt'%building,
+                pd.DataFrame(appliancesProfile).to_csv('appliancesProfiles.txt',
                                                        index=False, header=False),
                 # The flow rate should be a fraction of peak flow rate.
-                pd.DataFrame(hotWaterProfile/maxFlowHotWater).to_csv('hotWaterProfile%s.txt'%building,
+                pd.DataFrame(hotWaterProfile/maxFlowHotWater).to_csv('hotWaterProfiles.txt',
                                                                      index=False, header=False),
-                pd.DataFrame(lightingProfile).to_csv('lightingProfile%s.txt'%building, 
-                                                           index=False, header=False),
                 maxFlowHotWater)
 
 
@@ -187,17 +168,16 @@ class Initials:
 class Occupancy(Initials):
     
     
-    def __init__(self, idf, area, height, hotWaterTemp, coldWaterTemp, maxFlowHotWater, building):
+    def __init__(self, idf, area, height, hotWaterTemp, coldWaterTemp, maxFlowHotWater):
         self.idf = idf
         self.area = area
         self.height = height
         self.hotWaterTemp = hotWaterTemp
         self.coldWaterTemp = coldWaterTemp
-        self.maxFlowHotWater = maxFlowHotWater
-        self.building  = building            
+        self.maxFlowHotWater = maxFlowHotWater          
     
     
-    def people (idf, area, height, building):
+    def people (idf, area, height):
         """
         Sets occupants' related heat gain.
             
@@ -232,7 +212,7 @@ class Occupancy(Initials):
         idf.newidfobject ('SCHEDULE:FILE',
                           Name = 'PersonHeatProfile',
                           Schedule_Type_Limits_Name = 'Any Number',
-                          File_Name = 'personHeatProfile%s.txt' %building, 
+                          File_Name = 'personHeatProfiles.txt', 
                           Column_Number = '1',
                           Rows_to_Skip_at_Top = '0'
                           )        
@@ -241,58 +221,15 @@ class Occupancy(Initials):
         idf.newidfobject ('SCHEDULE:FILE',
                           Name = 'OccupancyProfile',
                           Schedule_Type_Limits_Name = 'Any Number',
-                          File_Name = 'occupancyProfile%s.txt' %building, 
+                          File_Name = 'occupancyProfiles.txt', 
                           Column_Number = '1',
                           Rows_to_Skip_at_Top = '0'
                           )
         
         return idf
  
-    
         
-    def lights (idf, area, height, building):
-        """
-        Sets the heat gain from using equipment and lighting.
-            
-        parameters
-        ------
-        idf: idf
-        
-        area: int
-            Area of building footprint       
-        height: int
-            Height of building
-        building: str
-            Main type of buildings, i.e., Apartment or House.
-            
-        output
-        ------
-        idf
-        """
-        # Sets the number of occupants
-        occ = Initials.occupants(area, height)
-        
-        # Sets internal gains for lighting equipment in the zone.
-        idf.newidfobject ('LIGHTS',
-                          Name = 'Lights',
-                          Zone_or_ZoneList_Name = 'Zone',
-                          Schedule_Name = 'LightingProfile',
-                          Design_Level_Calculation_Method = 'LightingLevel',
-                          Design_Level = str(occ* 1) #power/person
-                          )
-        
-        # Use profile schedule
-        idf.newidfobject ('SCHEDULE:FILE',
-                          Name = 'LihtingProfile',
-                          Schedule_Type_Limits_Name = 'Any Number',
-                          File_Name = 'lightingProfile%s.txt' %building,
-                          Column_Number = '1',
-                          Rows_to_Skip_at_Top = '0'
-                          )        
-            
-        return idf
-    
-    def equipment (idf, area, height, building):
+    def equipment (idf, area, height):
         """
         Sets the heat gain from using equipment and lighting.
             
@@ -327,7 +264,7 @@ class Occupancy(Initials):
         idf.newidfobject ('SCHEDULE:FILE',
                           Name = 'AppliancesProfile',
                           Schedule_Type_Limits_Name = 'Any Number',
-                          File_Name = 'appliancesProfile%s.txt' %building,
+                          File_Name = 'appliancesProfiles.txt',
                           Column_Number = '1',
                           Rows_to_Skip_at_Top = '0'
                           )        
@@ -335,7 +272,7 @@ class Occupancy(Initials):
         return idf
     
 
-    def dhw (idf, area, height, hotWaterTemp, coldWaterTemp, maxFlowHotWater, building):
+    def dhw (idf, area, height, hotWaterTemp, coldWaterTemp, maxFlowHotWater):
         """
         Calculates the hot water use in the zone.
             
@@ -397,7 +334,7 @@ class Occupancy(Initials):
         idf.newidfobject ('SCHEDULE:FILE',
                           Name = 'HotWaterUse',
                           Schedule_Type_Limits_Name = 'Any Number',
-                          File_Name = 'hotWaterProfile%s.txt' %building,
+                          File_Name = 'hotWaterProfiles.txt',
                           Column_Number = '1',
                           Rows_to_Skip_at_Top = '0'
                           )
