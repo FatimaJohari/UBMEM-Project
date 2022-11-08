@@ -201,29 +201,3 @@ class HVAC():
                     )
         
         return idf
-        
-
-    
-    def GSHP(Tamb, Tground, Q):
-        
-        Tsink = 40 - Tamb
-        COP = 10.29 - 0.21*(Tsink - Tground) + 0.0012 *(Tsink - Tground)**2
-        E = Q/COP
-        return E
-    
-    def XSHP(Tamb, Troom, Q):
-        
-        Tsink = 40 - Tamb
-        COP = 6.08 - 0.09*(Tsink - Troom)+ 0.0005 *(Tsink - Troom)**2
-        E = Q/COP
-        return E
-    
-    def ASHP(Tamb, Q):
-        
-        Tsink = 40 - Tamb
-        COP = 6.08 - 0.09*(Tsink - Tamb)+ 0.0005 *(Tsink - Tamb)**2
-        E = Q/COP
-        return E    
-
-
-
