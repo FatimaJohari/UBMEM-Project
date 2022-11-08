@@ -16,7 +16,7 @@ class Geometry:
     def global_geometry_rules(idf):
         
         """
-        Defines the global geometry rule of the idf file.
+        Defines the global geometry rule for the idf file.
         
         parameters
         -------
