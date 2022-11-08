@@ -13,7 +13,7 @@ import io
 import numpy as np
 
 
-def external_wall(x0,x1,y0,y1,z0,z1, i):
+def external_wall(x0, x1, y0, y1, z0, z1, i):
     """
     Writes the information of the external walls.
     
@@ -32,7 +32,6 @@ def external_wall(x0,x1,y0,y1,z0,z1, i):
   
     i: int
         Number of external wall in the building
-
                 
     output
     ------
@@ -51,7 +50,7 @@ def external_wall(x0,x1,y0,y1,z0,z1, i):
              'SunExposed, \n'+                 #!- Sun Exposure
              'WindExposed, \n'+                #!- Wind Exposure
              ',\n' +                           #!- View Factor to Ground
-             str(wallVertices)+',\n')         #!- Number of Vertices
+             str(wallVertices)+',\n')          #!- Number of Vertices
     
     # Vertices of the wall.
     wall += (str(x0)+',\n' + str(y0) + ',\n' + str(z0) + ',\n' +
@@ -61,7 +60,8 @@ def external_wall(x0,x1,y0,y1,z0,z1, i):
     
     return wall 
 
-def adiabatic_wall(x0,x1,y0,y1,z0,z1, i):
+
+def adiabatic_wall(x0, x1, y0, y1, z0, z1, i):
     """
     Writes the information of the adjacent walls.
     Assumed to be adiabatic.
@@ -72,7 +72,6 @@ def adiabatic_wall(x0,x1,y0,y1,z0,z1, i):
         The vertices of the external walls.
     i: int
         Number of external walls in the building
-
                 
     output
     ------
@@ -82,16 +81,17 @@ def adiabatic_wall(x0,x1,y0,y1,z0,z1, i):
     wallVertices = 4
     wall = ""        
     wall += ('BUILDINGSURFACE:DETAILED,'+'\n'+
-             'Wall'+str(i)+',\n'+              #!- Name
-             'Wall, \n'+                       #!- Surface Type
-             'Exterior Wall, \n'+              #!- Construction Name
-             'ZONE'+',\n'+                     #!- Zone Name
+             'Wall'+str(i)+',\n'+               #!- Name
+             'Wall, \n'+                        #!- Surface Type
+             'Exterior Wall, \n'+               #!- Construction Name
+             'ZONE'+',\n'+                      #!- Zone Name
              'Adiabatic, \n'+                   #!- Outside Boundary Condition
-             ', \n'+                           #!- Outside Boundary Condition Object
-             'NoSun, \n'+                 #!- Sun Exposure
-             'NoWind, \n'+                #!- Wind Exposure
-             ',\n' +                           #!- View Factor to Ground
-             str(wallVertices)+',\n')         #!- Number of Vertices
+             ', \n'+                            #!- Outside Boundary Condition Object
+             'NoSun, \n'+                       #!- Sun Exposure
+             'NoWind, \n'+                      #!- Wind Exposure
+             ',\n' +                            #!- View Factor to Ground
+             str(wallVertices)+',\n')           #!- Number of Vertices
+    
     # Vertices of the wall.
     wall += (str(x0)+',\n' + str(y0) + ',\n' + str(z0) + ',\n' +
              str(x0)+',\n' + str(y0) + ',\n' + str(z1) + ',\n' +
@@ -100,7 +100,8 @@ def adiabatic_wall(x0,x1,y0,y1,z0,z1, i):
     
     return wall 
 
-def external_win(x0, x1, y0, y1, z0, z1, i, basement):
+
+def external_win(x0, x1, y0, y1, z0, z1, i, zoneName):
     """
     Writes the information of the external windows.
     
@@ -111,7 +112,9 @@ def external_win(x0, x1, y0, y1, z0, z1, i, basement):
  
     i: int
         Number of external windows in the building.
-
+        
+    zoneName:str
+        Name of the zone, it can be either 'ZONE', or 'BASEMENT'.       
                 
     output
     ------
@@ -122,10 +125,10 @@ def external_win(x0, x1, y0, y1, z0, z1, i, basement):
     winVertices = 4
     win = ""        
     win += ('FENESTRATIONSURFACE:DETAILED,'+'\n'+
-            'Window'+basement+str(i)+',\n'+                  #!- Name
+            'Window'+zoneName+str(i)+',\n'+         #!- Name
             'Window, \n'+                           # !- Surface Type
             'Exterior Window, \n'+                  # !- Construction Name
-            'Wall'+basement+ str(i)+',\n'+                   # !-Building Surface Name
+            'Wall'+zoneName+ str(i)+',\n'+          # !-Building Surface Name
             ', \n'+
             ', \n'+
             ', \n'+
@@ -141,7 +144,7 @@ def external_win(x0, x1, y0, y1, z0, z1, i, basement):
 
 
 
-def roof(x,y,z):
+def roof(x, y, z):
     """
     Writes information of the external roof.
     
@@ -183,7 +186,7 @@ def roof(x,y,z):
     return roof
 
 
-def floor(x,y,z0,basement):
+def floor(x, y, z0, basement):
     """
     Writes information of the floor. 
     It is an external floor unless the building has a basement. 
@@ -194,6 +197,8 @@ def floor(x,y,z0,basement):
     x,y: nd.array
     z: int
         The vertices of the floor.
+    basement: int, 0 or 1
+        Infomation on the basement.
               
     output
     ------
@@ -246,7 +251,7 @@ def floor(x,y,z0,basement):
     return floor
 
 
-def basement_ceiling(x,y,z0):
+def basement_ceiling(x, y, z0):
     """
     Writes information of the basement ceiling.
     
@@ -287,7 +292,7 @@ def basement_ceiling(x,y,z0):
     return basementCeiling
 
     
-def basement_floor(x,y,zb):
+def basement_floor(x, y, zb):
     """
     Writes information of the basement external floor.
     
@@ -307,7 +312,7 @@ def basement_floor(x,y,zb):
     basementFloor += ('BUILDINGSURFACE:DETAILED,'+'\n'+
                        'Exterior Floor, \n'+                #!- Name
                        'Floor, \n'+                         #!- Surface Type
-                       'Exterior Floor Basement, \n'+                #!- Construction Name
+                       'Exterior Floor Basement, \n'+       #!- Construction Name
                        'BASEMENT, \n'+                      #!- Zone Name
                        'Adiabatic, \n'+         #!- Outside Boundary Condition
                        ',\n'+                        #!- Outside Boundary Condition Object
@@ -328,14 +333,14 @@ def basement_floor(x,y,zb):
     return basementFloor
 
 
-def basement_adiabatic_wall(x0,x1,y0,y1,z0,zb,i):  
+def basement_adiabatic_wall(x0, x1, y0, y1, z0, zb, i):  
     """
-    Writes the information of the basement external floor.
+    Writes the information of the basement adiabatic external wall.
     
     parameters
     ----------
     x0,x1,y0,y1,z0,zb: int
-        The vertices of the external walls of the basement.
+        The vertices of the adiabatic walls of the basement.
     
     i: int
         Number of the walls.
@@ -365,9 +370,9 @@ def basement_adiabatic_wall(x0,x1,y0,y1,z0,zb,i):
     
     return basementWall 
     
-def basement_external_wall(x0,x1,y0,y1,z0,z1,i):  
+def basement_external_wall(x0, x1, y0, y1, z0, z1, i):  
     """
-    Writes the information of the basement external floor.
+    Writes the information of the basement exposed external wall.
     
     parameters
     ----------
@@ -404,54 +409,36 @@ def basement_external_wall(x0,x1,y0,y1,z0,z1,i):
 
 
 class oneZone:
-    def __init__(self, buildingPolygon, buildingHeight, basement, wwr, adjacency):
+    def __init__(self, buildingPolygon, buildingHeight, basement, wwr, adjacency, zoneName):
         self.buildingPolygon = buildingPolygon
         self.buildingHeight= buildingHeight
         self.basement = basement
         self.wwr = wwr
         self.adjacency = adjacency
+        self.zoneName = zoneName
 
-    def zone (idf):
+    def zone (idf, zoneName):
         """
         Initializes the calculations of the thermal zone in EnergyPlus.
         
         parameters
         ----------
         idf
+        zoneName:str
+            Name of the zone, it can be either 'ZONE', or 'BASEMENT'.
         
         output
         ----------
         idf  
         """
         idf.newidfobject('ZONE',
-                         Name = 'ZONE',
+                         Name = zoneName,
                          Ceiling_Height = 'autocalculate',
                          Volume = 'autocalculate',
                          Floor_Area = 'autocalculate',
                          Part_of_Total_Floor_Area = 'yes')
         return idf
     
-    def zone_basement(idf):
-        """
-        Initializes the calculations of the thermal zone of the basement in EnergyPlus.
-        
-        parameters
-        ----------
-        idf
-        
-        output
-        ----------
-        idf  
-        """
-        idf.newidfobject('ZONE',
-                         Name = 'BASEMENT',
-                         Ceiling_Height = 'autocalculate',
-                         Volume = 'autocalculate',
-                         Floor_Area = 'autocalculate',
-                         Part_of_Total_Floor_Area = 'yes')
-        return idf
-        
-        return idf
     
     def onezone_building_surfaces(buildingPolygon, buildingHeight, basement, wwr, adjacency):
         """
@@ -470,6 +457,9 @@ class oneZone:
             
         wwr: int
             Window to wall ratio.
+            
+        adjacency: gpd.GeoDatFrame
+            A dataframe with the adjacent buildings.
                   
         output
         ------
@@ -482,10 +472,10 @@ class oneZone:
         heightbAdiabatic = -1.3 # height of the under ground floors.
         wwrb = wwr
         
-        # Convert the geometry of the building polygon to arrays of x and y.
+        # Converts the geometry of the building polygon to arrays of x and y.
         x,y = buildingPolygon.exterior.xy 
             
-        # Reverse the order for adjacent floor and ceiling
+        # Reverses the order for adjacent floor and ceiling
         xx,yy = x[::-1],y[::-1] 
         
         idftxt = ""   
@@ -495,7 +485,7 @@ class oneZone:
             
             for i in range(len(x)-1):
 
-                # Find the center of the walls.
+                # Finds the center of the walls.
                 point = LineString([(x[i],y[i]),(x[i+1],y[i+1])]).centroid
                 
                 adj = []
@@ -503,30 +493,28 @@ class oneZone:
                     
                     p = Polygon(adjacency.geometry[j])
                     
-                    # Calculate the distance of adjacency.
+                    # Calculates the distance of adjacency.
                     adj.append( point.distance(p) )
                     
                 # If the distance of adjacency is less than 20 cm, it is an adiabatic wall,
                 # otherwise a a normal heat transmittance external wall. 
                 if np.array(adj).any() < 0.2:
-                    print('adj')
-                    
+                   
                     # Adiabatic walls with no windows.
-                    idftxt += (adiabatic_wall(x[i],x[i+1],y[i],y[i+1],height0,buildingHeight,i))
-                    
+                    idftxt += (adiabatic_wall(x[i],x[i+1],y[i],y[i+1],height0,buildingHeight,i))  
                 
                 else:
                     # External Walls
                     idftxt += (external_wall(x[i],x[i+1],y[i],y[i+1],height0,buildingHeight,i)) 
                     
-                    # Get the length of a wall
+                    # Gets the length of a wall
                     line = LineString([Point((x[i],y[i])), Point((x[i+1],y[i+1]))])
             
-                    # Add windows if the length of the wall is greater than 2 meters.
-                    # Avoid having windows on smaller walls of complex building shapes.
+                    # Adds windows if the length of the wall is greater than 2 meters.
+                    # Avoids having windows on smaller walls of complex building shapes.
                     if line.length > 2:
                         
-                        # Calculate the geometry of windows based on the geometry of the walls and WWR.
+                        # Calculates the geometry of windows based on the geometry of the walls and WWR.
                         a = line.interpolate(wwr, normalized=True)
                         b = line.interpolate(1-wwr, normalized=True)
                         R = (buildingHeight - buildingHeight * math.sqrt(wwr))/2
@@ -540,11 +528,11 @@ class oneZone:
                 # External Walls
                 idftxt += (external_wall(x[i],x[i+1],y[i],y[i+1],height0,buildingHeight,i)) 
                 
-                # Get the length of a wall
+                # Gets the length of a wall
                 line = LineString([Point((x[i],y[i])), Point((x[i+1],y[i+1]))])
                 
-                # Add windows if the length of the wall is greater than 2 meters.
-                # Avoid having windows on smaller walls of complex building shapes.
+                # Adds windows if the length of the wall is greater than 2 meters.
+                # Avoids having windows on smaller walls of complex building shapes.
                 if line.length>2:
                     
                     # Calculates the geometry of windows based on the geometry of the walls and WWR
@@ -571,11 +559,11 @@ class oneZone:
                 # Basement exposed walls (onground walls)
                 idftxt += basement_external_wall(x[i], x[i+1], y[i], y[i+1], height0, heightbExposed, i)
                 
-                # Get the length of a wall
+                # Gets the length of a wall
                 line = LineString([Point((x[i],y[i])), Point((x[i+1],y[i+1]))])
         
-                # Add windows if the length of the wall is greater than 2 meters.
-                # Avoid having windows on smaller walls of complex building shapes.
+                # Adds windows if the length of the wall is greater than 2 meters.
+                # Avoids having windows on smaller walls of complex building shapes.
                 if line.length > 2:
                     
                     # Calculate the geometry of windows based on the geometry of the walls and WWR.
@@ -590,9 +578,8 @@ class oneZone:
             idftxt += basement_ceiling(xx, yy, heightbExposed)
             idftxt += basement_floor(x, y, heightbAdiabatic)    
         
-        # Convert the text file to an idf.
+        # Converts the text file to an idf.
         fhandle = io.StringIO(idftxt) 
         idf = IDF(fhandle) 
         
         return idf
-    
